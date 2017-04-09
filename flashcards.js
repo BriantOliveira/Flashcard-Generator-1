@@ -2,6 +2,8 @@ var inquirer = require("inquirer");
 var library = require("./cardLibrary.json");
 var fs = require("fs");
 
+var drawnCard;
+var playedCard;
 var count = 0;
 
 //initially give option to the user to Create new flashcards or use exiting ones.
@@ -125,18 +127,66 @@ function createCard() {
     });
 };
 
-			// build out a BasicCard Constructor and ClozeCard constructor.
+// Constructor function for the 'Basic Card'.
+function BasicCard(front, back) {
+    this.front = front;
+    this.back = back;
 
-			// **Basic Card Constructor -- ask the user for there question and then ask for an answer. Store the responses in 
-			//   a JSON object to pull from later
+};
 
-			// **Cloze Card Constuctor -- ask the user for the full text of their card. Then ask for the cloze portion they
-			//   want to replace with '...'
+// Constructor function for the 'Cloze Card'.
+function ClozeCard(text, cloze) {
+    this.text = text.split(cloze);
+    this.cloze = cloze;
 
-//if the answer is 'Use' then run an askQuestions function
+};
 
-			// pull the stored cards from the stored JSON and present them to the user. use a function that uses a counter to loop 
-			// through the questions using recursion.
+// Constructor that creates a prototype of ClozeCard to return the question missing cloze
+function ClozeCardPrototype() {
 
-			//after each question print if the user is correct, if not print the correct answer.
+    this.clozeRemoved = function () {
+        return `${this.text[0]} ... ${this.text[1]}`;  //Template literal enclosed by the back-tick ` allows embedded expressions wrapped with ${}
+    };											
+};
+
+ClozeCard.prototype = new ClozeCardPrototype();
+
+//function used to get the question from the drawnCard in the askQuestions function
+function getQuestion(card) {
+    if (card.type === "BasicCard") {						//If the cards type is "BasicCard" then....
+        drawnCard = new BasicCard(card.front, card.back);	//drawnCard becomes a new instance of BasicCard constuctor with its front and back passed in
+        return drawnCard.front;								//Return the front of the card (the questions side)
+    } else if (card.type === "ClozeCard") {					//If the card type is "Cloze Card" then...
+        drawnCard = new ClozeCard(card.text, card.cloze)	//drawnCard becomes a new instance of ClozeCard constuctor with its text and cloze passed in
+        return drawnCard.clozeRemoved();					//Return the ClozeCard prototpe method clozeRemoved to show the question missing the cloze
+    }
+};
+
+//function to ask questions from all stored card in the library
+function askQuestions() {
+    if (count < library.length) {					//if current count (starts at 0) is less than the number of cards in the library....
+        playedCard = getQuestion(library[count]);	//playedCard stores the question from the card with index equal to the current counter.
+        inquirer.prompt([							//inquirer used to ask the question from the playedCard.
+            {
+                type: "input",
+                message: playedCard,
+                name: "question"
+            }
+        ]).then(function (answer) {					//once the user answers
+        	//if the users answer equals .back or .cloze of the playedCard run a message "You are correct."
+            if (answer.question === library[count].back || answer.question === library[count].cloze) {
+                console.log("You are correct.");
+            } else {
+            	//check to see if current card is Cloze or Basic
+                if (drawnCard.front !== undefined) { //if card has a front then it is a Basic card
+                    console.log("Sorry, the correct answer was " + library[count].back + "."); //grabs & shows correct answer
+                } else { // otherwise it is a Cloze card 
+                    console.log("Sorry, the correct answer was " + library[count].cloze + ".");//grabs & shows correct answer
+                }
+            }
+            count++; 		//increase the counter for the next run through
+            askQuestions(); //recursion. call the function within the function to keep it running. It will stop when counter=library.length
+        });
+    }
+};
 
