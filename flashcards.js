@@ -1,5 +1,7 @@
 var inquirer = require("inquirer");
 var library = require("./cardLibrary.json");
+var BasicCard = require("./BasicCard.js")
+var ClozeCard = require("./ClozeCard.js")
 var fs = require("fs");
 
 var drawnCard;
@@ -126,30 +128,6 @@ function createCard() {
 
     });
 };
-
-// Constructor function for the 'Basic Card'.
-function BasicCard(front, back) {
-    this.front = front;
-    this.back = back;
-
-};
-
-// Constructor function for the 'Cloze Card'.
-function ClozeCard(text, cloze) {
-    this.text = text.split(cloze);
-    this.cloze = cloze;
-
-};
-
-// Constructor that creates a prototype of ClozeCard to return the question missing cloze
-function ClozeCardPrototype() {
-
-    this.clozeRemoved = function () {
-        return `${this.text[0]} ... ${this.text[1]}`;  //Template literal enclosed by the back-tick ` allows embedded expressions wrapped with ${}
-    };											
-};
-
-ClozeCard.prototype = new ClozeCardPrototype();
 
 //function used to get the question from the drawnCard in the askQuestions function
 function getQuestion(card) {

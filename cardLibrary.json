@@ -8,5 +8,15 @@
     "type": "ClozeCard",
     "text": "The United States was founded in the year 1776.",
     "cloze": "1776"
+  },
+  {
+    "type": "BasicCard",
+    "front": "2 + 2",
+    "back": "4"
+  },
+  {
+    "type": "ClozeCard",
+    "text": "Brees is a good dog",
+    "cloze": "dog"
   }
 ]
