@@ -5,14 +5,9 @@
     "back": "Thomas Jefferson"
   },
   {
-    "type": "ClozeCard",
-    "text": "Benjamin Franklin was an American patriot, writer, printer, and inventor. During the Revolutionary War he persuaded the French to help the colonists.",
-    "cloze": "Benjamin Franklin"
-  },
-  {
     "type": "BasicCard",
-    "front": "A tax that the British Pariliament placed on newspapers and official documents sold in the American Colonies.",
-    "back": "Stamp Act"
+    "front": "Who was the first president of the United States?",
+    "back": "George Washington"
   },
   {
     "type": "ClozeCard",
@@ -20,9 +15,14 @@
     "cloze": "John Hancock"
   },
   {
+    "type": "ClozeCard",
+    "text": "The United States was founded in the year 1776.",
+    "cloze": "1776"
+  },
+  {
     "type": "BasicCard",
-    "front": "Who was the first president of the United States?",
-    "back": "George Washington"
+    "front": "A tax that the British Pariliament placed on newspapers and official documents sold in the American Colonies.",
+    "back": "Stamp Act"
   },
   {
     "type": "BasicCard",
@@ -31,12 +31,12 @@
   },
   {
     "type": "ClozeCard",
-    "text": "The Boston Tea Party was a 1773 protest against British taxes in which colonists disguised as Mohawks dumped a valuable trade good into Boston Harbor.",
-    "cloze": "Tea Party"
+    "text": "Benjamin Franklin was an American patriot, writer, printer, and inventor. During the Revolutionary War he persuaded the French to help the colonists.",
+    "cloze": "Benjamin Franklin"
   },
   {
     "type": "ClozeCard",
-    "text": "The United States was founded in the year 1776.",
-    "cloze": "1776"
+    "text": "The Boston Tea Party was a 1773 protest against British taxes in which colonists disguised as Mohawks dumped a valuable trade good into Boston Harbor.",
+    "cloze": "Tea Party"
   }
 ]

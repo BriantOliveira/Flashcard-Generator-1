@@ -1,8 +1,9 @@
-var inquirer = require("inquirer");
-var library = require("./cardLibrary.json");
-var BasicCard = require("./BasicCard.js")
-var ClozeCard = require("./ClozeCard.js")
-var fs = require("fs");
+const inquirer = require("inquirer");
+const library = require("./cardLibrary.json");
+const BasicCard = require("./BasicCard.js")
+const ClozeCard = require("./ClozeCard.js")
+const colors = require('colors');
+const fs = require("fs");
 
 var drawnCard;
 var playedCard;
@@ -14,7 +15,7 @@ function openMenu() {
       {
           type: "list",												//type list gives user a list of options
           message: "\nPlease choose a menu option from the list below?",	//message shown to the user
-          choices: ["Create", "Use All", "Random", "Shuffle", "Exit"],									//options that show in list
+          choices: ["Create", "Use All", "Random", "Shuffle", "Show All", "Exit"],									//options that show in list
           name: "menuOptions"											//refrence name of object
       }
   ]).then(function (answer) {							//Once inquirer gets answer then...
@@ -40,6 +41,11 @@ function openMenu() {
         case 'Shuffle':
             console.log("OK I'll shuffle all the cards in the deck...");
             waitMsg = setTimeout(shuffleDeck, 1000);
+            break;
+
+        case 'Show All':
+            console.log("OK I'll print all cards in the deck to your screen...");
+            waitMsg = setTimeout(showCards, 1000);
             break;
 
         case 'Exit':
@@ -201,6 +207,7 @@ function askQuestions() {
             askQuestions(); //recursion. call the function within the function to keep it running. It will stop when counter=library.length
         });
     } else {
+      count=0;
       openMenu();
     }
 };
@@ -218,7 +225,7 @@ function shuffleDeck() {
   }
   fs.writeFile("cardLibrary.json", JSON.stringify(newDeck, null, 2)); //write the new randomized array over the old one
   console.log("The deck of flashcards have been shuffled");
-  setTimeout(openMenu, 1000);
+  //setTimeout(openMenu, 1000);  //*** shuffle only works on app reload, look into how to apply it in-app
 }
 
 //function to ask question from a random card
@@ -250,3 +257,36 @@ function randomCard() {
         });
 
 };
+
+//function to print all cards on screen for user to read through
+function showCards () {
+  if (count < library.length) {                     //if counter stays below the length of the library array
+    //currentCard = getQuestion(library[count]);      //currentCard variable becomes
+
+    if (library[count].front !== undefined) { //if card has a front then it is a Basic card
+        console.log("");
+        console.log(colors.yellow("++++++++++++++++++ Basic Card ++++++++++++++++++"));
+        console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
+        console.log("Front: " + library[count].front); //grabs & shows card question
+        console.log("------------------------------------------------");
+        console.log("Back: " + library[count].back + "."); //grabs & shows card question
+        console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
+        console.log("");
+
+    } else { // otherwise it is a Cloze card
+        console.log("");
+        console.log(colors.yellow("++++++++++++++++++ Cloze Card ++++++++++++++++++"));
+        console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
+        console.log("Text: " + library[count].text); //grabs & shows card question
+        console.log("------------------------------------------------");
+        console.log("Cloze: " + library[count].cloze + "."); //grabs & shows card question
+        console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
+        console.log("");
+    }
+    count++;
+    showCards();
+  } else {
+    count=0;
+    openMenu();
+  }
+}
