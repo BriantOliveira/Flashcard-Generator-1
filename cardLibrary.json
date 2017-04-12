@@ -1,8 +1,18 @@
 [
   {
+    "type": "ClozeCard",
+    "text": "Benjamin Franklin was an American patriot, writer, printer, and inventor. During the Revolutionary War he persuaded the French to help the colonists.",
+    "cloze": "Benjamin Franklin"
+  },
+  {
     "type": "BasicCard",
     "front": "Who was the first president of the United States?",
     "back": "George Washington"
+  },
+  {
+    "type": "BasicCard",
+    "front": "A tax that the British Pariliament placed on newspapers and official documents sold in the American Colonies.",
+    "back": "Stamp Act"
   },
   {
     "type": "ClozeCard",
@@ -10,13 +20,13 @@
     "cloze": "1776"
   },
   {
-    "type": "BasicCard",
-    "front": "2 + 2",
-    "back": "4"
+    "type": "ClozeCard",
+    "text": "The Boston Tea Party was a 1773 protest against British taxes in which colonists disguised as Mohawks dumped a valuable trade good into Boston Harbor.",
+    "cloze": "Tea Party"
   },
   {
-    "type": "ClozeCard",
-    "text": "Brees is a good dog",
-    "cloze": "dog"
+    "type": "BasicCard",
+    "front": "A person who supported the British during the American Revolution.",
+    "back": "Loyalist"
   }
 ]

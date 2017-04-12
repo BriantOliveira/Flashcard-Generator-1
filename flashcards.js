@@ -14,15 +14,44 @@ inquirer.prompt([													//use inquirer to ask question
     {
         type: "list",												//type list gives user a list of options
         message: "Would you like to create or use flash cards?",	//message shown to the user
-        choices: ["Create", "Use"],									//options that show in list
-        name: "createOrUse"											//refrence name of object
+        choices: ["Create", "Use All", "Random", "Shuffle"],									//options that show in list
+        name: "menuOptions"											//refrence name of object
     }
 ]).then(function (answer) {							//Once inquirer gets answer then...
-    if (answer.createOrUse === "Create") {			//If the answer to createOrUse is Create then
+  var waitMsg;
+
+  switch (answer.menuOptions) {
+
+      case 'Create':
+          console.log("Ok lets make a new flashcard...");
+          waitMsg = setTimeout(createCard, 1000);
+          break;
+
+      case 'Use All':
+          console.log("OK lets run through the deck...");
+          waitMsg = setTimeout(askQuestions, 1000);
+          break;
+
+      case 'Random':
+          console.log("OK I'll pick one random card from the deck...");
+          waitMsg = setTimeout(randomCard, 1000);
+          break;
+
+      case 'Shuffle':
+          console.log("OK I'll shuffle all the cards in the deck...");
+          waitMsg = setTimeout(shuffleDeck, 1000);
+          break;
+
+      default:
+          console.log("");
+          console.log("Sorry I don't understand");
+          console.log("");
+  }
+    /*if (answer.createOrUse === "Create") {			//If the answer to createOrUse is Create then
         createCard();								//call the createCard function
     } else {										//else (if the answer isnt create its use)
         askQuestions();								//call the askQuestions function
-    }
+    }*/
 });
 
 //If the choice is to create a card then this function will run
@@ -37,8 +66,8 @@ function createCard() {
 
     ]).then(function (appData) {
 
-        var cardType = appData.cardType;  			//the variable cardType will store the choice from the cardType inquirer object. 
-        console.log(cardType);			  			//prints the card type chosen to the user		
+        var cardType = appData.cardType;  			//the variable cardType will store the choice from the cardType inquirer object.
+        console.log(cardType);			  			//prints the card type chosen to the user
 
         if (cardType === "Basic Card") {
             inquirer.prompt([
@@ -64,7 +93,7 @@ function createCard() {
                 library.push(cardObj);				//push the new card into the array of cards
                 fs.writeFile("cardLibrary.json", JSON.stringify(library, null, 2)); //write the updated array to the carLibrary.json file
 
-                inquirer.prompt([					//use inquirer to ask if the user wants to keep making cards				
+                inquirer.prompt([					//use inquirer to ask if the user wants to keep making cards
                     {
                         type: "list",
                         message: "Do you want to create another card?",
@@ -108,7 +137,7 @@ function createCard() {
                 } else {											//if the cloze doesnt match then give a message to the user.
                     console.log("Sorry, The cloze must match some word(s) in the text of your statement.");
                 }
-                inquirer.prompt([					//use inquirer to ask if the user wants to keep making cards				
+                inquirer.prompt([					//use inquirer to ask if the user wants to keep making cards
                     {
                         type: "list",
                         message: "Do you want to create another card?",
@@ -158,7 +187,7 @@ function askQuestions() {
             	//check to see if current card is Cloze or Basic
                 if (drawnCard.front !== undefined) { //if card has a front then it is a Basic card
                     console.log("Sorry, the correct answer was " + library[count].back + "."); //grabs & shows correct answer
-                } else { // otherwise it is a Cloze card 
+                } else { // otherwise it is a Cloze card
                     console.log("Sorry, the correct answer was " + library[count].cloze + ".");//grabs & shows correct answer
                 }
             }
@@ -168,3 +197,43 @@ function askQuestions() {
     }
 };
 
+function shuffleDeck() {
+  newDeck = library.slice(0); //copy the flashcards into a new array
+  for (var i = library.length - 1; i > 0; i--) { //this algorithm (Fisher-Yates shuffle) should jumble up the order of the copied array
+
+      var getIndex = Math.floor(Math.random() * (i + 1));
+      var shuffled = newDeck[getIndex];
+
+      newDeck[getIndex] = newDeck[i];
+
+      newDeck[i] = shuffled;
+  }
+  fs.writeFile("cardLibrary.json", JSON.stringify(newDeck, null, 2)); //write the new randomized array over the old one
+  console.log("The deck of flashcards have been shuffled");
+}
+
+//function to ask question from a random card
+function randomCard() {
+  var randomNumber = Math.floor(Math.random() * (library.length - 1));  // get a random index number within the length of the current library
+
+  playedCard = getQuestion(library[randomNumber]);	//playedCard stores the question from the card with index equal to the randomNumber.
+        inquirer.prompt([							//inquirer used to ask the question from the playedCard.
+            {
+                type: "input",
+                message: playedCard,
+                name: "question"
+            }
+        ]).then(function (answer) {					//once the user answers
+        	//if the users answer equals .back or .cloze of the playedCard run a message "You are correct."
+            if (answer.question === library[randomNumber].back || answer.question === library[randomNumber].cloze) {
+                console.log("You are correct.");
+            } else {
+            	//check to see if rando card is Cloze or Basic
+                if (drawnCard.front !== undefined) { //if card has a front then it is a Basic card
+                    console.log("Sorry, the correct answer was " + library[randomNumber].back + "."); //grabs & shows correct answer
+                } else { // otherwise it is a Cloze card
+                    console.log("Sorry, the correct answer was " + library[randomNumber].cloze + ".");//grabs & shows correct answer
+                }
+            }
+        });
+};
