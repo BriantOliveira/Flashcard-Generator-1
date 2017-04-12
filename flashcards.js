@@ -49,6 +49,7 @@ function openMenu() {
             break;
 
         case 'Exit':
+            console.log("Thank you for using the Flashcard-Generator")
             return;
             break;
 
@@ -117,7 +118,7 @@ function createCard() {
                     if (appData.anotherCard === "Yes") {	//If 'Yes' then..
                         createCard();						//call the create card function again (recursion)
                     } else {								//Else (if the answer isnt Yes then its No)...
-                        openMenu();								//reopen the main menu to the user
+                        setTimeout(openMenu, 1000);			//reopen the main menu to the user
                     }
                 });
             });
@@ -148,6 +149,7 @@ function createCard() {
                     fs.writeFile("cardLibrary.json", JSON.stringify(library, null, 2)); //write the updated array to the cardLibrary file
                 } else {											//if the cloze doesnt match then give a message to the user.
                     console.log("Sorry, The cloze must match some word(s) in the text of your statement.");
+
                 }
                 inquirer.prompt([					//use inquirer to ask if the user wants to keep making cards
                     {
@@ -161,7 +163,7 @@ function createCard() {
                     if (appData.anotherCard === "Yes") {	//If 'Yes' then..
                         createCard();						//call the create card function again (recursion)
                     } else {								//Else (if the answer isnt Yes then its No)...
-                        return;								//end the app and reurn to the command prompt
+                        setTimeout(openMenu, 1000);		//return the user to the open menu
                     }
                 });
             });
@@ -194,13 +196,13 @@ function askQuestions() {
         ]).then(function (answer) {					//once the user answers
         	//if the users answer equals .back or .cloze of the playedCard run a message "You are correct."
             if (answer.question === library[count].back || answer.question === library[count].cloze) {
-                console.log("You are correct.");
+                console.log(colors.green("You are correct."));
             } else {
             	//check to see if current card is Cloze or Basic
                 if (drawnCard.front !== undefined) { //if card has a front then it is a Basic card
-                    console.log("Sorry, the correct answer was " + library[count].back + "."); //grabs & shows correct answer
+                    console.log(colors.red("Sorry, the correct answer was ") + library[count].back + "."); //grabs & shows correct answer
                 } else { // otherwise it is a Cloze card
-                    console.log("Sorry, the correct answer was " + library[count].cloze + ".");//grabs & shows correct answer
+                    console.log(colors.red("Sorry, the correct answer was ") + library[count].cloze + ".");//grabs & shows correct answer
                 }
             }
             count++; 		//increase the counter for the next run through
@@ -224,8 +226,8 @@ function shuffleDeck() {
       newDeck[i] = shuffled;
   }
   fs.writeFile("cardLibrary.json", JSON.stringify(newDeck, null, 2)); //write the new randomized array over the old one
-  console.log("The deck of flashcards have been shuffled");
-  //setTimeout(openMenu, 1000);  //*** shuffle only works on app reload, look into how to apply it in-app
+  console.log(colors.cyan("The deck of flashcards have been shuffled"));
+  setTimeout(openMenu, 1000);  //*** shuffle only works on app reload, look into how to apply it in-app
 }
 
 //function to ask question from a random card
@@ -260,16 +262,19 @@ function randomCard() {
 
 //function to print all cards on screen for user to read through
 function showCards () {
-  if (count < library.length) {                     //if counter stays below the length of the library array
+
+  var freshDeck = require("./cardLibrary.json");
+
+  if (count < freshDeck.length) {                     //if counter stays below the length of the library array
     //currentCard = getQuestion(library[count]);      //currentCard variable becomes
 
-    if (library[count].front !== undefined) { //if card has a front then it is a Basic card
+    if (freshDeck[count].front !== undefined) { //if card has a front then it is a Basic card
         console.log("");
         console.log(colors.yellow("++++++++++++++++++ Basic Card ++++++++++++++++++"));
         console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
-        console.log("Front: " + library[count].front); //grabs & shows card question
+        console.log("Front: " + freshDeck[count].front); //grabs & shows card question
         console.log("------------------------------------------------");
-        console.log("Back: " + library[count].back + "."); //grabs & shows card question
+        console.log("Back: " + freshDeck[count].back + "."); //grabs & shows card question
         console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
         console.log("");
 
@@ -277,9 +282,9 @@ function showCards () {
         console.log("");
         console.log(colors.yellow("++++++++++++++++++ Cloze Card ++++++++++++++++++"));
         console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
-        console.log("Text: " + library[count].text); //grabs & shows card question
+        console.log("Text: " + freshDeck[count].text); //grabs & shows card question
         console.log("------------------------------------------------");
-        console.log("Cloze: " + library[count].cloze + "."); //grabs & shows card question
+        console.log("Cloze: " + freshDeck[count].cloze + "."); //grabs & shows card question
         console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
         console.log("");
     }
