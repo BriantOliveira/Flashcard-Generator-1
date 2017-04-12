@@ -9,50 +9,56 @@ var playedCard;
 var count = 0;
 
 //initially give option to the user to Create new flashcards or use exiting ones.
+function openMenu() {
+  inquirer.prompt([													//use inquirer to ask question
+      {
+          type: "list",												//type list gives user a list of options
+          message: "\nPlease choose a menu option from the list below?",	//message shown to the user
+          choices: ["Create", "Use All", "Random", "Shuffle", "Exit"],									//options that show in list
+          name: "menuOptions"											//refrence name of object
+      }
+  ]).then(function (answer) {							//Once inquirer gets answer then...
+    var waitMsg;
 
-inquirer.prompt([													//use inquirer to ask question
-    {
-        type: "list",												//type list gives user a list of options
-        message: "Would you like to create or use flash cards?",	//message shown to the user
-        choices: ["Create", "Use All", "Random", "Shuffle"],									//options that show in list
-        name: "menuOptions"											//refrence name of object
+    switch (answer.menuOptions) {
+
+        case 'Create':
+            console.log("Ok lets make a new flashcard...");
+            waitMsg = setTimeout(createCard, 1000);
+            break;
+
+        case 'Use All':
+            console.log("OK lets run through the deck...");
+            waitMsg = setTimeout(askQuestions, 1000);
+            break;
+
+        case 'Random':
+            console.log("OK I'll pick one random card from the deck...");
+            waitMsg = setTimeout(randomCard, 1000);
+            break;
+
+        case 'Shuffle':
+            console.log("OK I'll shuffle all the cards in the deck...");
+            waitMsg = setTimeout(shuffleDeck, 1000);
+            break;
+
+        case 'Exit':
+            return;
+            break;
+
+        default:
+            console.log("");
+            console.log("Sorry I don't understand");
+            console.log("");
     }
-]).then(function (answer) {							//Once inquirer gets answer then...
-  var waitMsg;
-
-  switch (answer.menuOptions) {
-
-      case 'Create':
-          console.log("Ok lets make a new flashcard...");
-          waitMsg = setTimeout(createCard, 1000);
-          break;
-
-      case 'Use All':
-          console.log("OK lets run through the deck...");
-          waitMsg = setTimeout(askQuestions, 1000);
-          break;
-
-      case 'Random':
-          console.log("OK I'll pick one random card from the deck...");
-          waitMsg = setTimeout(randomCard, 1000);
-          break;
-
-      case 'Shuffle':
-          console.log("OK I'll shuffle all the cards in the deck...");
-          waitMsg = setTimeout(shuffleDeck, 1000);
-          break;
-
-      default:
-          console.log("");
-          console.log("Sorry I don't understand");
-          console.log("");
-  }
-    /*if (answer.createOrUse === "Create") {			//If the answer to createOrUse is Create then
-        createCard();								//call the createCard function
-    } else {										//else (if the answer isnt create its use)
-        askQuestions();								//call the askQuestions function
-    }*/
-});
+      /*if (answer.createOrUse === "Create") {			//If the answer to createOrUse is Create then
+          createCard();								//call the createCard function
+      } else {										//else (if the answer isnt create its use)
+          askQuestions();								//call the askQuestions function
+      }*/
+  });
+}
+openMenu();
 
 //If the choice is to create a card then this function will run
 function createCard() {
@@ -105,7 +111,7 @@ function createCard() {
                     if (appData.anotherCard === "Yes") {	//If 'Yes' then..
                         createCard();						//call the create card function again (recursion)
                     } else {								//Else (if the answer isnt Yes then its No)...
-                        return;								//end the app and reurn to the command prompt
+                        openMenu();								//reopen the main menu to the user
                     }
                 });
             });
@@ -194,6 +200,8 @@ function askQuestions() {
             count++; 		//increase the counter for the next run through
             askQuestions(); //recursion. call the function within the function to keep it running. It will stop when counter=library.length
         });
+    } else {
+      openMenu();
     }
 };
 
@@ -210,6 +218,7 @@ function shuffleDeck() {
   }
   fs.writeFile("cardLibrary.json", JSON.stringify(newDeck, null, 2)); //write the new randomized array over the old one
   console.log("The deck of flashcards have been shuffled");
+  setTimeout(openMenu, 1000);
 }
 
 //function to ask question from a random card
@@ -227,13 +236,17 @@ function randomCard() {
         	//if the users answer equals .back or .cloze of the playedCard run a message "You are correct."
             if (answer.question === library[randomNumber].back || answer.question === library[randomNumber].cloze) {
                 console.log("You are correct.");
+                setTimeout(openMenu, 1000);
             } else {
             	//check to see if rando card is Cloze or Basic
                 if (drawnCard.front !== undefined) { //if card has a front then it is a Basic card
                     console.log("Sorry, the correct answer was " + library[randomNumber].back + "."); //grabs & shows correct answer
+                    setTimeout(openMenu, 1000);
                 } else { // otherwise it is a Cloze card
                     console.log("Sorry, the correct answer was " + library[randomNumber].cloze + ".");//grabs & shows correct answer
+                    setTimeout(openMenu, 1000);
                 }
             }
         });
+
 };
