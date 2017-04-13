@@ -11,14 +11,14 @@ var count = 0;
 
 //initially give option to the user to Create new flashcards or use exiting ones.
 function openMenu() {
-  inquirer.prompt([													//use inquirer to ask question
+  inquirer.prompt([															//use inquirer to ask question
       {
-          type: "list",												//type list gives user a list of options
+          type: "list",														//type list gives user a list of options
           message: "\nPlease choose a menu option from the list below?",	//message shown to the user
-          choices: ["Create", "Use All", "Random", "Shuffle", "Show All", "Exit"],									//options that show in list
-          name: "menuOptions"											//refrence name of object
+          choices: ["Create", "Use All", "Random", "Shuffle", "Show All", "Exit"],	//options that show in list
+          name: "menuOptions"												//refrence name of object
       }
-  ]).then(function (answer) {							//Once inquirer gets answer then...
+  ]).then(function (answer) {												//Once inquirer gets answer then...
     var waitMsg;
 
     switch (answer.menuOptions) {
@@ -58,13 +58,11 @@ function openMenu() {
             console.log("Sorry I don't understand");
             console.log("");
     }
-      /*if (answer.createOrUse === "Create") {			//If the answer to createOrUse is Create then
-          createCard();								//call the createCard function
-      } else {										//else (if the answer isnt create its use)
-          askQuestions();								//call the askQuestions function
-      }*/
+
   });
+
 }
+
 openMenu();
 
 //If the choice is to create a card then this function will run
@@ -209,8 +207,8 @@ function askQuestions() {
             askQuestions(); //recursion. call the function within the function to keep it running. It will stop when counter=library.length
         });
     } else {
-      count=0;
-      openMenu();
+      	count=0;			//reset counter to 0 once loop ends
+      	openMenu();			//call the menu for the user to continue using the app
     }
 };
 
@@ -227,7 +225,7 @@ function shuffleDeck() {
   }
   fs.writeFile("cardLibrary.json", JSON.stringify(newDeck, null, 2)); //write the new randomized array over the old one
   console.log(colors.cyan("The deck of flashcards have been shuffled"));
-  setTimeout(openMenu, 1000);  //*** shuffle only works on app reload, look into how to apply it in-app
+  //setTimeout(openMenu, 1000);  //*** shuffle only works on app reload, look into how to apply it in-app
 }
 
 //function to ask question from a random card
@@ -244,15 +242,15 @@ function randomCard() {
         ]).then(function (answer) {					//once the user answers
         	//if the users answer equals .back or .cloze of the playedCard run a message "You are correct."
             if (answer.question === library[randomNumber].back || answer.question === library[randomNumber].cloze) {
-                console.log("You are correct.");
+                console.log(colors.green("You are correct."));
                 setTimeout(openMenu, 1000);
             } else {
             	//check to see if rando card is Cloze or Basic
                 if (drawnCard.front !== undefined) { //if card has a front then it is a Basic card
-                    console.log("Sorry, the correct answer was " + library[randomNumber].back + "."); //grabs & shows correct answer
+                    console.log(colors.red("Sorry, the correct answer was ") + library[randomNumber].back + "."); //grabs & shows correct answer
                     setTimeout(openMenu, 1000);
                 } else { // otherwise it is a Cloze card
-                    console.log("Sorry, the correct answer was " + library[randomNumber].cloze + ".");//grabs & shows correct answer
+                    console.log(colors.red("Sorry, the correct answer was ") + library[randomNumber].cloze + ".");//grabs & shows correct answer
                     setTimeout(openMenu, 1000);
                 }
             }
@@ -263,18 +261,18 @@ function randomCard() {
 //function to print all cards on screen for user to read through
 function showCards () {
 
-  var freshDeck = require("./cardLibrary.json");
+  var library = require("./cardLibrary.json");
 
-  if (count < freshDeck.length) {                     //if counter stays below the length of the library array
+  if (count < library.length) {                     //if counter stays below the length of the library array
     //currentCard = getQuestion(library[count]);      //currentCard variable becomes
 
-    if (freshDeck[count].front !== undefined) { //if card has a front then it is a Basic card
+    if (library[count].front !== undefined) { //if card has a front then it is a Basic card
         console.log("");
         console.log(colors.yellow("++++++++++++++++++ Basic Card ++++++++++++++++++"));
         console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
-        console.log("Front: " + freshDeck[count].front); //grabs & shows card question
+        console.log("Front: " + library[count].front); //grabs & shows card question
         console.log("------------------------------------------------");
-        console.log("Back: " + freshDeck[count].back + "."); //grabs & shows card question
+        console.log("Back: " + library[count].back + "."); //grabs & shows card question
         console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
         console.log("");
 
@@ -282,16 +280,16 @@ function showCards () {
         console.log("");
         console.log(colors.yellow("++++++++++++++++++ Cloze Card ++++++++++++++++++"));
         console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
-        console.log("Text: " + freshDeck[count].text); //grabs & shows card question
+        console.log("Text: " + library[count].text); //grabs & shows card question
         console.log("------------------------------------------------");
-        console.log("Cloze: " + freshDeck[count].cloze + "."); //grabs & shows card question
+        console.log("Cloze: " + library[count].cloze + "."); //grabs & shows card question
         console.log(colors.yellow("++++++++++++++++++++++++++++++++++++++++++++++++"));
         console.log("");
     }
-    count++;
-    showCards();
+    count++;		//increase the counter each round
+    showCards();	//re-call the function with in itself. recursion.
   } else {
-    count=0;
-    openMenu();
+    count=0;		//reset counter to 0 once loop ends
+    openMenu();		//call the menu for the user to continue using the app
   }
 }

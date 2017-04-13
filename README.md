@@ -53,6 +53,12 @@ This is useful for building flash card applications that forces users to remembe
 
   * `Exit` will take the user out of the application and back to their command prompt.
 
+- - -
+## Known Issues & TODO Items
+
+  * Need to fix the shuffle to work correctly with out having to reload the app.
+
+  * Add a menu item (function) to delete a card or whole deck for the user.
 
 - - -
 
